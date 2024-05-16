@@ -1,0 +1,40 @@
+— Этап №1
+CREATE TABLE university.faculty (id int primary key, name varchar(100), price numeric (9,2))
+CREATE TABLE university.course (id int primary key, course_number int, faculty_id int REFERENCES university.faculty(id));
+CREATE TABLE university.student (id int primary key, name varchar(100), last_name varchar(100), middle_name varchar(100), is_budget_form boolean, course_id int REFERENCES university.course(id));
+	
+— Этап №2
+INSERT INTO university.faculty values (1, 'Инженерный', 30000.00);
+INSERT INTO university.faculty values (2, 'Экономический', 49000.00);
+
+INSERT INTO university.course values (1, 1, 1);
+INSERT INTO university.course values (2, 1, 2);
+INSERT INTO university.course values (3, 4, 2);
+
+INSERT INTO university.student values (1, 'Петр', 'Петров', 'Петрович', true, 1);
+INSERT INTO university.student values (2, 'Иван', 'Иванов', 'Иваныч', false, 1);
+INSERT INTO university.student values (3, 'Сергей', 'Михно', 'Иваныч', true, 3);
+INSERT INTO university.student values (4, 'Ирина', 'Стоцкая', 'Юрьевна', false, 3);
+INSERT INTO university.student values (5, 'Настасья', 'Младич', null, false, 2);
+
+— Этап №3
+select *
+from university.student st 
+	join university.course co on st.course_id = co.id 
+	join university.faculty fa on co.faculty_id = fa.id
+where is_budget_form = false and price > 30000
+
+UPDATE university.student SET course_id = 2
+where last_name = 'Петров' 
+
+select *
+from university.student 
+where last_name is null or middle_name is null
+
+select *
+from university.student 
+where name like '%ван%' or last_name like '%ван%' or middle_name like '%ван%'
+
+DELETE from university.student 
+DELETE from university.faculty
+DELETE from university.course
