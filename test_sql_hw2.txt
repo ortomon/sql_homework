@@ -1,0 +1,39 @@
+-- 1. количество заказов за все время
+select count (order_id) 
+from public.orders
+
+
+-- 2. сумма по всем заказам за все время (учитывая скидки)
+select sum(det.quantity * det.unit_price * (1 - det.discount)) 
+from public.orders ord join public.order_details det on ord.order_id = det.order_id 
+
+
+-- 3. количество сотрудников работает в каждом городе.
+select city, count(employee_id) as employees_count
+from public.employees 
+group by city
+
+-- select city, count(employee_id) over (partition by city) as employees_count
+-- from public.employees 
+
+
+-- 4. самый продаваемый товар в штуках. Вывести имя продукта и его количество.
+
+select prod.product_name, sum(det.quantity) as total_quantity
+from public.orders ord 
+	join public.order_details det on ord.order_id = det.order_id 
+	join public.products prod on det.product_id = prod.product_id 
+group by product_name
+order by total_quantity desc
+limit 1
+
+
+-- 5. фио сотрудника, у которого сумма всех заказов самая маленькая
+select emp.last_name, emp.first_name, sum(det.quantity * det.unit_price * (1 - det.discount)) as total_sales
+from public.orders ord
+	join public.order_details det on ord.order_id = det.order_id 
+	join public.employees emp on ord.employee_id = emp.employee_id
+group by ord.employee_id, emp.last_name, emp.first_name
+order by total_sales asc
+limit 1
+
